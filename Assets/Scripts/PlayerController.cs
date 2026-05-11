@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         playerRenderer = GetComponent<Renderer>();
         focalPoint = GameObject.Find("Focal Point");
-        Physics.gravity *= gravityModifier;
+        Physics.gravity = Vector3.down * 9.81f * gravityModifier;
         SetPowerup(false);
     }
 
@@ -90,6 +90,7 @@ public class PlayerController : MonoBehaviour
         if (enemyRigidbody != null)
         {
             Vector3 awayFromPlayer = collision.gameObject.transform.position - transform.position;
+            awayFromPlayer.y = 0f;
             enemyRigidbody.AddForce(awayFromPlayer.normalized * powerupStrength, ForceMode.Impulse);
         }
 

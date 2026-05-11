@@ -20,7 +20,9 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        Vector3 lookDirection = (player.transform.position - transform.position).normalized;
+        Vector3 lookDirection = player.transform.position - transform.position;
+        lookDirection.y = 0f;
+        lookDirection.Normalize();
         enemyRb.AddForce(lookDirection * speed);
         if (transform.position.y < -10f)
         {
