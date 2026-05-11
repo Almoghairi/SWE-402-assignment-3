@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
+    private const float ArenaBodyHeight = 0.86f;
+    private const float ArenaRadius = 4.05f;
+
     public float speed = 9f;
     public float gravityModifier = 1.8f;
     public float powerupStrength = 18f;
@@ -33,6 +36,13 @@ public class PlayerController : MonoBehaviour
         playerRenderer = GetComponent<Renderer>();
         focalPoint = GameObject.Find("Focal Point");
         Physics.gravity = Vector3.down * 9.81f * gravityModifier;
+        playerRb.linearDamping = 1.2f;
+        playerRb.angularDamping = 0.8f;
+        playerRb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        playerRb.position = new Vector3(playerRb.position.x, ArenaBodyHeight, playerRb.position.z);
+        playerRb.linearVelocity = Vector3.zero;
+        DisableVisualColliders(powerupIndicator);
+        DisableVisualColliders(GameObject.Find("Emissive Arena Edge"));
         SetPowerup(false);
     }
 
@@ -41,7 +51,10 @@ public class PlayerController : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
         if (focalPoint != null)
         {
-            playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed);
+            Vector3 moveDirection = focalPoint.transform.forward;
+            moveDirection.y = 0f;
+            moveDirection.Normalize();
+            playerRb.AddForce(moveDirection * verticalInput * speed);
         }
 
         if (moveTrail != null)
@@ -71,6 +84,23 @@ public class PlayerController : MonoBehaviour
             audioSource.PlayOneShot(powerupClip, 0.75f);
         }
         StartCoroutine(PowerupCountdownRoutine());
+    }
+
+    private void FixedUpdate()
+    {
+        if (IsOverArena())
+        {
+            Vector3 velocity = playerRb.linearVelocity;
+            if (transform.position.y > ArenaBodyHeight + 0.35f && velocity.y > 0f)
+            {
+                playerRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
+            }
+            else if (transform.position.y < ArenaBodyHeight - 0.45f)
+            {
+                playerRb.position = new Vector3(transform.position.x, ArenaBodyHeight, transform.position.z);
+                playerRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
+            }
+        }
     }
 
     private IEnumerator PowerupCountdownRoutine()
@@ -121,6 +151,25 @@ public class PlayerController : MonoBehaviour
         if (playerRenderer != null)
         {
             playerRenderer.sharedMaterial = active && poweredMaterial != null ? poweredMaterial : normalMaterial;
+        }
+    }
+
+    private bool IsOverArena()
+    {
+        Vector2 flatPosition = new Vector2(transform.position.x, transform.position.z);
+        return flatPosition.magnitude <= ArenaRadius;
+    }
+
+    private static void DisableVisualColliders(GameObject visualObject)
+    {
+        if (visualObject == null)
+        {
+            return;
+        }
+
+        foreach (Collider collider in visualObject.GetComponentsInChildren<Collider>(true))
+        {
+            collider.enabled = false;
         }
     }
 }

@@ -1432,7 +1432,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 4128734924550947670, guid: e0d6dc15c28344bbda9910fa1cc53141, type: 3}
   powerupPrefab: {fileID: 9191435785059067941, guid: 75f4d4790ac574f4cbf2628f65a420f5, type: 3}
   waveNumber: 0
-  spawnRange: 8
+  spawnRange: 3.35
 --- !u!4 &2013623641
 Transform:
   m_ObjectHideFlags: 0

@@ -2,10 +2,14 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+    private const float ArenaSpawnRadius = 3.35f;
+    private const float SafeCenterRadius = 1.75f;
+    private const float SpawnHeight = 0.86f;
+
     public GameObject enemyPrefab;
     public GameObject powerupPrefab;
     public int waveNumber = 0;
-    public float spawnRange = 8f;
+    public float spawnRange = ArenaSpawnRadius;
     private bool spawningEnabled = true;
 
     private void OnEnable()
@@ -55,14 +59,14 @@ public class SpawnManager : MonoBehaviour
 
     public Vector3 GenerateSpawnPosition()
     {
-        float spawnPosX = Random.Range(-spawnRange, spawnRange);
-        float spawnPosZ = Random.Range(-spawnRange, spawnRange);
-        Vector3 position = new Vector3(spawnPosX, 0.75f, spawnPosZ);
-        if (position.magnitude < 2.5f)
+        float radius = Mathf.Min(spawnRange, ArenaSpawnRadius);
+        Vector2 flatPosition = Random.insideUnitCircle * radius;
+        if (flatPosition.magnitude < SafeCenterRadius)
         {
-            position = position.normalized * 3f;
+            float angle = Random.Range(0f, Mathf.PI * 2f);
+            flatPosition = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * SafeCenterRadius;
         }
-        return position;
+        return new Vector3(flatPosition.x, SpawnHeight, flatPosition.y);
     }
 
     private void StopSpawning()
