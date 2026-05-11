@@ -52,15 +52,8 @@ public class Enemy : MonoBehaviour
         }
 
         Vector3 velocity = enemyRb.linearVelocity;
-        if (transform.position.y > ArenaBodyHeight + 0.35f && velocity.y > 0f)
-        {
-            enemyRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
-        }
-        else if (transform.position.y < ArenaBodyHeight - 0.45f)
-        {
-            transform.position = new Vector3(transform.position.x, ArenaBodyHeight, transform.position.z);
-            enemyRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
-        }
+        transform.position = new Vector3(transform.position.x, ArenaBodyHeight, transform.position.z);
+        enemyRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
     }
 
     private bool IsOverArena()

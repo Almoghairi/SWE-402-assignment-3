@@ -91,15 +91,8 @@ public class PlayerController : MonoBehaviour
         if (IsOverArena())
         {
             Vector3 velocity = playerRb.linearVelocity;
-            if (transform.position.y > ArenaBodyHeight + 0.35f && velocity.y > 0f)
-            {
-                playerRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
-            }
-            else if (transform.position.y < ArenaBodyHeight - 0.45f)
-            {
-                playerRb.position = new Vector3(transform.position.x, ArenaBodyHeight, transform.position.z);
-                playerRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
-            }
+            playerRb.position = new Vector3(transform.position.x, ArenaBodyHeight, transform.position.z);
+            playerRb.linearVelocity = new Vector3(velocity.x, 0f, velocity.z);
         }
     }
 
