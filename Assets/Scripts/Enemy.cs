@@ -24,9 +24,9 @@ public class Enemy : MonoBehaviour
         player = GameObject.Find("Player");
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (player == null)
+        if (player == null || !IsOverArena())
         {
             return;
         }
@@ -35,9 +35,15 @@ public class Enemy : MonoBehaviour
         lookDirection.y = 0f;
         if (lookDirection.sqrMagnitude > 0.001f)
         {
-            enemyRb.AddForce(lookDirection.normalized * speed);
+            Vector3 pursuitVelocity = lookDirection.normalized * speed;
+            enemyRb.linearVelocity = new Vector3(pursuitVelocity.x, 0f, pursuitVelocity.z);
+            transform.forward = lookDirection.normalized;
         }
         KeepStableOnArena();
+    }
+
+    private void Update()
+    {
         if (transform.position.y < -10f)
         {
             Destroy(gameObject);
